@@ -17,9 +17,15 @@ TOWN_ROOT="${GT_TOWN:-$HOME/gt}"
 LOG_FILE="${GT_SYNC_LOG:-$HOME/gt/logs/auto-sync.log}"
 CONTROL_SCRIPT="$HOME/gt/bin/gt-sync-control"
 
+# Base64 encoded telegraph icons (18x18 PNG)
+ICON_GREEN="iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABvElEQVR4nFVUwXaEQAgL6P9/a2/tRdKXhHHb2eeqwwBJAOvr+4eogq7iA60CQe1Bl00g80b/GuCgulHM2bvPeRJTl4/6ciDGqBuI0d3Oa9JGl5P05Iz/OtZ9JWqAGnqHTijUBokqoVLwMY67WJs3CHLf9+WjZyqw7VmiE/pZ/T6tQwIN6AQV2+hg0JgViVYO58l+5yE8DV9H2eJkBAiejbAoF+0JruvWv+yvgFySfxxqA4lKarApJjb539FOJQ0FC7qBJbOWEx2aQrtJpkVZuIjbt03+lp7ArCD9X0a1z64H5dKnPW5l3Tb6BNsyH+m1eJQ+UiiBY6SyNzkhIOcWbAWJkcr4KFE0cTBT0p6wHmEVqPN6qblGIfmisUb9QRMka6vH7ZFKqyGPYSYVUcfaK+Xl1kC7apNokNZVxx/yt+bFQ3m1o/cpOTV3YwpxISSDu7kaLT+xEYtu3J51Dd8VbYzsuuyYyo35tAZaNsMZ63eIat/SK3KrPyYju11lKqUivI25Y+HPwDvrboF8E9Q3eJL5ak89Hmmk5xXaM+TwJuwkT1J6+jOtGZi0iVVKA2/7K4io/Jv1/dC5OAR+AQEFJyKaSyycAAAAAElFTkSuQmCC"
+ICON_YELLOW="iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABqklEQVR4nFVU0W7EMAizWf//X/c2TWqYbEN7u9OuaUJssGH8/v1pHAAkgIY+rSUBNsCjBXB4gyigG02vcHeDOkSjdECBsKGvPl9NlMD1KjQ/AiJUfQVRu2LhEv2Q7k3gnIcJpVCh5nyxqcxC4f1Liy/vEN3Lliy3RPTsCWBInagCiuABLtWqJLuP0zWrNYF1YKciZ8wCjiHDIFnuwWunmNSVRRgj5haLuRgVle2YMgSO10Uh5ghIXkSfE217bgxqsxJfQFXlmJBGA9IHNVr3U0ujT4Th6Kc9rVeCcSkVCLdYuB/yKaHKKQcgGvGjTJE7DTauWB8rVhdrpRgL+7JaS4fq6d+4JyCHxoCxeprO9vPtFG5JT/9/EBDXDgZH6DAq7RkVpH/+O6j2kHvPZhqSR8FzMKW94teUZHjQuqhvkryz7gHKCdVUEVFbVW5KzJhs48j2NJDHdBt/htZ/YRwZRvn+KGgHUs8d1se0jKSDNKg+eRTcQXjGJC7GSb27Gd4+CsP2xTsccSMVDa1uqd51bxLW22UQw8+0e3inFMOLKy7q/44yD39MWnP+AMP6AzsU1I+2AAAAAElFTkSuQmCC"
+ICON_ORANGE="iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABvElEQVR4nE2UQXYkMQhDhbvuf9jZZVEw70u4k04ncdkghFC5/v38zJRUM9JIqrPrUX+kw6FGVcWWPz2jU+X/dcpph9OEApJVazSHtRY8IPyyC6gWzGkAbZHkuKRDA0ZyhalZ7xoORAZ8pHf0pI0SP3yXj8qZMuhbYQ2z9va227cVWmObjd7gy5VA/v7pMEer1cwfOUoPUI5uWokIdFDIdyGSEVCzz1AAgQTHj1uw4KtPg/I7KdGLxZdOS03rQzYTgwX5hdgwobfQJBcAA3fYHfiZWKkcy+oYwCxr9ITBjng1sOQGk1M8uSs4sGQfBrKWKGtE4HXSbAXoMj1Zwki1Q/laZaewqU/3G9e6rRwG8pui6/i12BrTorhwCn5K84EqOVvSKCijmM4y2COrZ0DoJlJNmEcNG91TYjoRV67oIABgvWy+TNfdJ56+VlydbkVeYLdir38bvi0JWQDBkHEqdAPWS8UcX6jJL7BhNsyaSnqZ3D4/8XCp31S5ghsNEHKxCAi47q73nbuDOXjCVlpB7nv3nRyt+UqxHX3/9N5BPH/mWM+H/r19JXBivIToqUB5rq4U4Dqx93D2tEX5DxkVIRWi0uzSAAAAAElFTkSuQmCC"
+ICON_RED="iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABtklEQVR4nF1UQXLEMAiTiP//1h7bQ6EjAc5sk+yOY2MJhBx+/XzXA0JPVYEgCgCK+oMfltc1AwSSCVaCeDxWzHk69gZq3IADGrNegeIvwESkJh6AhShCr8cbWVpHDpgAevdeBbJQRe1FabHTa0ISRyU4c4GonGoEE0xpoReR3eUEKEGaWZhnmcVmRDHs3M2mi3bJDJTKEodQBc7CYTRNIm9JTqxlwyrXm9hZLYu5my7KwknYBZjtoX3sUgSw76Jzhg1GhH/Hc0Nj9FvXqpmoCR4N3BiF5XSU6e5JUt1ODVCKSzhdcLbtC+9UpCXVXeXxcfDKqsBHYi5WGcxtN+EkPOZd/RghHykDopSvGVqH7R53DNpnV20DJyr6LNiQH9c6PGeFCivoBLzHpb3XV1qNaCOKXYthWQUU8AmEgdUyZ7udejN1O0POnm6I1cc1d4POFUDXo5j89JGd3pCabGfrGKgUp23DjPwBZFo/Car2VCXUjopndOyenwZ/0VtHsSiL+Xxo7DZ3pzr3+cTMEYpQKbfZbZA1RBlc/GPY91vgg7xFywnnv5Nb4O7MOGccvwl2Ka9Rw7r9AdTHD1bsSvKKAAAAAElFTkSuQmCC"
+
 # Check if daemon is running
 if ! pgrep -f "gt-auto-sync" > /dev/null 2>&1; then
-  echo "🚀❌ | color=red"
+  echo "| templateImage=$ICON_RED"
   echo "---"
   echo "❌ Daemon NOT Running | color=red"
   echo "Start Daemon | shell='$CONTROL_SCRIPT' param1=start terminal=false refresh=true"
@@ -30,7 +36,7 @@ fi
 
 # Parse log file for recent activity
 if [ ! -f "$LOG_FILE" ]; then
-  echo "🚀⚠️ | color=orange"
+  echo "| templateImage=$ICON_YELLOW"
   echo "---"
   echo "⚠️ No log file found | color=orange"
   exit 0
@@ -61,24 +67,24 @@ FAILURES_24H=${FAILURES_24H:-0}
 LAST_SYNC=$(grep "📤" "$LOG_FILE" | tail -1 | sed -E 's/^\[([^]]+)\].*/\1/' || echo "Never")
 
 # Determine icon state
-ICON="🚀"
+ICON="$ICON_GREEN"
 COLOR="green"
 STATUS="All systems operational"
 
 if [ "$TOTAL_RECENT_ATTEMPTS" -gt 0 ] && [ "$RECENT_FAILURES" -ge 3 ]; then
-  # Grey: 3+ of last 10 syncs failed
-  ICON="🚀"
-  COLOR="#888888"
+  # Red: 3+ of last 10 syncs failed (critical)
+  ICON="$ICON_RED"
+  COLOR="red"
   STATUS="Multiple recent failures"
 elif [ "$FAILURES_24H" -gt 0 ]; then
-  # Semi-transparent: Some failures in 24h
-  ICON="🚀"
+  # Orange: Some failures in 24h
+  ICON="$ICON_ORANGE"
   COLOR="orange"
   STATUS="Failures in last 24 hours"
 fi
 
 # Menu bar display
-echo "$ICON | color=$COLOR"
+echo "| templateImage=$ICON"
 echo "---"
 echo "Gas Town Auto-Sync"
 echo "Status: $STATUS | color=$COLOR"
