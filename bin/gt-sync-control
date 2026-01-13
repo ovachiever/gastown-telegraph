@@ -1,0 +1,64 @@
+#!/bin/bash
+# Control script for Gas Town Auto-Sync daemon
+# https://github.com/YOUR_USERNAME/gt-auto-sync
+
+PLIST="$HOME/Library/LaunchAgents/com.gastown.autosync.plist"
+LOG_FILE="${GT_SYNC_LOG:-$HOME/gt/logs/auto-sync.log}"
+
+case "$1" in
+  start)
+    echo "Starting Gas Town Auto-Sync daemon..."
+    launchctl load "$PLIST" 2>/dev/null || launchctl start com.gastown.autosync
+    sleep 2
+    if launchctl list | grep -q com.gastown.autosync; then
+      echo "✅ Daemon started"
+      echo "📋 Log: tail -f $LOG_FILE"
+    else
+      echo "❌ Failed to start"
+      exit 1
+    fi
+    ;;
+    
+  stop)
+    echo "Stopping Gas Town Auto-Sync daemon..."
+    launchctl unload "$PLIST" 2>/dev/null || launchctl stop com.gastown.autosync
+    echo "✅ Daemon stopped"
+    ;;
+    
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+    
+  status)
+    if launchctl list | grep -q com.gastown.autosync; then
+      echo "✅ Daemon is running"
+      echo ""
+      echo "Recent activity:"
+      tail -20 "$LOG_FILE" 2>/dev/null || echo "No logs yet"
+    else
+      echo "❌ Daemon is not running"
+      echo "Start with: gt-sync-control start"
+    fi
+    ;;
+    
+  log)
+    tail -f "$LOG_FILE"
+    ;;
+    
+  *)
+    echo "Gas Town Auto-Sync Control"
+    echo "Version: 1.0.0"
+    echo ""
+    echo "Usage: $0 {start|stop|restart|status|log}"
+    echo ""
+    echo "Commands:"
+    echo "  start   - Start the auto-sync daemon"
+    echo "  stop    - Stop the auto-sync daemon"
+    echo "  restart - Restart the daemon"
+    echo "  status  - Check daemon status and recent activity"
+    echo "  log     - Tail the log file (live)"
+    exit 1
+    ;;
+esac

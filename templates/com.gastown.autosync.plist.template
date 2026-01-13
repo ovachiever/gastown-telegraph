@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.gastown.autosync</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>__INSTALL_DIR__/bin/gt-auto-sync</string>
+    </array>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>__GT_TOWN__/logs/auto-sync.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>__GT_TOWN__/logs/auto-sync-error.log</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin</string>
+        <key>GT_TOWN</key>
+        <string>__GT_TOWN__</string>
+    </dict>
+    
+    <key>ProcessType</key>
+    <string>Background</string>
+    
+    <key>Nice</key>
+    <integer>1</integer>
+</dict>
+</plist>

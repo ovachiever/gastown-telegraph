@@ -1,0 +1,57 @@
+#!/bin/bash
+# Gas Town Auto-Sync Daemon
+# Automatically pushes all rigs after refinery merges
+# https://github.com/YOUR_USERNAME/gt-auto-sync
+
+set -euo pipefail
+
+TOWN_ROOT="${GT_TOWN:-$HOME/gt}"
+LOG_FILE="${GT_SYNC_LOG:-$HOME/gt/logs/auto-sync.log}"
+CHECK_INTERVAL="${GT_SYNC_INTERVAL:-30}"
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
+}
+
+log "🚀 Gas Town Auto-Sync Daemon starting..."
+log "   Version: 1.0.0"
+log "   Town root: $TOWN_ROOT"
+log "   Check interval: ${CHECK_INTERVAL}s"
+log "   Log file: $LOG_FILE"
+
+while true; do
+  for rig_path in "$TOWN_ROOT"/*/mayor/rig; do
+    [ -d "$rig_path" ] || continue
+    
+    rig_name=$(basename "$(dirname "$(dirname "$rig_path")")")
+    
+    [ -d "$rig_path/.git" ] || continue
+    
+    cd "$rig_path" 2>/dev/null || continue
+    
+    current_branch=$(git branch --show-current 2>/dev/null || echo "")
+    if [ "$current_branch" != "main" ] && [ "$current_branch" != "master" ]; then
+      continue
+    fi
+    
+    if ! git remote get-url origin >/dev/null 2>&1; then
+      continue
+    fi
+    
+    git fetch origin "$current_branch" --quiet 2>/dev/null || continue
+    
+    ahead=$(git rev-list --count "origin/$current_branch..$current_branch" 2>/dev/null || echo "0")
+    
+    if [ "$ahead" != "0" ]; then
+      log "📤 $rig_name: Pushing $ahead commit(s) to origin/$current_branch..."
+      
+      if git push origin "$current_branch" 2>&1 | tee -a "$LOG_FILE"; then
+        log "✅ $rig_name: Successfully pushed"
+      else
+        log "❌ $rig_name: Push failed (may need manual intervention)"
+      fi
+    fi
+  done
+  
+  sleep "$CHECK_INTERVAL"
+done

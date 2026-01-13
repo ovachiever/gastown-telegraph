@@ -1,0 +1,20 @@
+# Beads issue tracking (local only)
+.beads/
+.bv/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Editor
+.idea/
+.vscode/
+*.sublime-*
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
